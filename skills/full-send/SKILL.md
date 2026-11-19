@@ -62,6 +62,18 @@ watcher from `babysit-pr`, so something wakes you when the PR changes. In T3
 Code that is `watch_pull_request`. If you stop before the merge, call
 `unwatch_pull_request` first.
 
+## Dependabot updates
+
+At the start, inspect open Dependabot dependency-update PRs for this repository.
+Include their updates in the working PR when compatible with the task and
+feasible to validate; preserve attribution and test the combined changes.
+Keep incompatible or unverified updates separate and report why. After the
+working PR merges, verify each included update is present on the default branch,
+then close its superseded Dependabot PR and delete its head branch. Never close
+or delete an update that was not included, or a branch containing other work.
+This preference authorizes only that cleanup, not closing unrelated PRs or
+deleting other branches. Report the included updates and cleanup outcome.
+
 ## Proof
 
 Proof is evidence you observed yourself in this session: command output, a
@@ -86,7 +98,7 @@ Full confidence means all of these are true on the latest commit:
 - Your proof covers every change in the diff.
 - Required checks are green.
 - Review bots have finished, and each finding is fixed or dismissed with a
-  written reason.
+  written reason, except as described under "Stalled Codex review" below.
 - No human review still requests changes.
 - The branch is up to date with the default branch, and GitHub reports it as
   mergeable.
@@ -96,6 +108,22 @@ PRs. If the repo uses a merge queue or auto-merge, stay until GitHub reports the
 PR as merged. Merge through branch protection as configured. Never use `--admin`
 or other bypasses. You can ignore automated reviews that request "needs human
 review" if you have high confidence in your changes.
+
+### Stalled Codex review
+
+If the non-required Codex review bot is still pending or says it is running
+for at least 10 minutes on the current head without a result, treat it as stalled.
+You may proceed without asking when the remaining merge gate passes, an
+independent Sol review approves the current behavior diff, and all available
+bot findings and review threads have been addressed and all other review bots
+have finished. Check Codex's latest status and findings again just before
+merging. Report the stalled review and the decision in the final report.
+A pending or failed required check, an open human change request, unresolved
+finding, or missing proof still blocks merge; never bypass branch protection.
+
+Use the PR watcher for review updates. If it cannot wake on elapsed time, use
+an available one-shot wake or bounded wait to recheck after 10 minutes; do not
+create a polling loop or leave the PR waiting indefinitely for the bot.
 
 ## Asking the user
 
